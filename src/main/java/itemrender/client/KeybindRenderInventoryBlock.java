@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.ForgeHooksClient;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -24,8 +25,10 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
 import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.nio.IntBuffer;
 import java.util.EnumSet;
 
@@ -82,13 +85,33 @@ public class KeybindRenderInventoryBlock extends KeyBindingRegistry.KeyHandler {
                 RenderHelper.disableStandardItemLighting();
 
                 fbo.end();
+                
+
 
                 fbo.saveToFile(new File(minecraft.mcDataDir,
-                                        String.format("rendered/item_%d_%d%s.png", current.getItem().itemID, current.getItemDamage(), filenameSuffix)));
+                                        String.format("rendered/" + GetValidFileName(current.getItem().getUnlocalizedName()) + "_%d_%d%s.png", current.getItem().itemID, current.getItemDamage(), filenameSuffix)));
 
                 fbo.restoreTexture();
             }
         }
+    }
+    
+    private static String GetValidFileName(String fileName)
+    {
+        String cleanedFilename = null;
+        try
+        {
+            cleanedFilename = new String(fileName.getBytes(), "UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        cleanedFilename = cleanedFilename.replaceAll("[\\?\\\\/:|<>\\*]", " "); //filter ? \ / : | < > *
+        cleanedFilename = cleanedFilename.replaceAll("\\s+", "_");
+        return cleanedFilename;
     }
 
     @Override
