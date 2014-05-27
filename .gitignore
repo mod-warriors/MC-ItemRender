@@ -5,3 +5,11 @@ bin/
 # Tmp files
 *~
 *#
+.gradle/
+eclipse/
+.settings/
+gradle/
+output/
+.cache
+.classpath
+.project
