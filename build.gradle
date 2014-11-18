@@ -5,15 +5,18 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
     }
     dependencies {
-       classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
-apply plugin: 'idea'
-apply plugin: 'forge'
 apply plugin: 'scala'
+apply plugin: 'forge'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
@@ -31,6 +34,8 @@ archivesBaseName = "ItemRender"
 
 minecraft {
     version = "${config.version.minecraft}-${config.version.forge}"
+    runDir = "run"
+    mappings = "snapshot_20140925"
 	
 	replaceIn "ModMinechem.java"
 	replace "@MAJOR@", config.version.mod.major
@@ -103,26 +108,7 @@ task apiZip(type: Zip) {
     destinationDir = file 'output'
 }
 
-task runClient(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "net.minecraft.launchwrapper.Launch"
-    args("--version", "1.6",
-        "--tweakClass", "cpw.mods.fml.common.launcher.FMLTweaker",
-        "--accessToken", "FML")
-    jvmArgs("-Xincgc",
-        "-Xmx1024M",
-        "-Xms1024M",
-        "-Djava.library.path=${project.buildDir}/natives",
-        "-Dfml.ignoreInvalidMinecraftCertificates=true")
-    workingDir("eclipse")
-}
 
-task runServer(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "cpw.mods.fml.relauncher.ServerLaunchWrapper"
-    jvmArgs("-Xincgc", "-Dfml.ignoreInvalidMinecraftCertificates=true")
-}
-	
 artifacts {
     archives apiZip
 }
