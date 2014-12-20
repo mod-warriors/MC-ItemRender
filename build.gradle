@@ -16,7 +16,6 @@ buildscript {
 }
 
 apply plugin: 'forge'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 ext.buildProps = file "build.properties"
@@ -34,19 +33,17 @@ task makePretty(type: Delete) {
 clean{
    dependsOn makePretty
 }
-version = "MC${config.version.minecraft}-F${config.version.forge}_v${config.version.mod.major}.${config.version.mod.minor}${config.version.mod.revis}"
+version = "MC${config.version.minecraft}_v${config.version.mod.major}.${config.version.mod.minor}${config.version.mod.revis}"
 group = "itemrender"
 archivesBaseName = "ItemRender"
 
 minecraft {
     version = "${config.version.minecraft}-${config.version.forge}"
     runDir = "run"
-    mappings = "snapshot_20140925"
+    mappings = config.version.mappings
 	
-	replaceIn "ModMinechem.java"
-	replace "@MAJOR@", config.version.mod.major
-	replace "@MINOR@", config.version.mod.minor
-	replace "@REVIS@", config.version.mod.revis
+	replaceIn "ItemRenderMod.java"
+	replace "@MOD_VERSION@", project.version
 	
 	if (System.getenv("BUILD_NUMBER") != null) {
 		replace "@BUILD@", System.getenv("BUILD_NUMBER")
@@ -64,10 +61,6 @@ else {
 	version = "MC${config.version.minecraft}-F${config.version.forge}_[NIGHTLY]"
 }
 
-processResources {
-	from 'build.properties'
-}
-
 allprojects {
     version = "${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}"
     
@@ -83,8 +76,6 @@ allprojects {
     }
     
     jar {
-		
-        dependsOn ":copyBuildXml"
         destinationDir = file (rootProject.getRootDir().getPath() + '/output')
     }
 	
@@ -101,22 +92,3 @@ allprojects {
 		}
 	}
 }
- 
-task copyBuildXml(type: Copy) {
-    from 'build.properties'
-    into 'output'
-}
- 
-task apiZip(type: Zip) {
-    classifier = 'api'
-    from sourceSets*.allSource
-    include 'itemrender/api/**'
-    destinationDir = file 'output'
-}
-
-
-artifacts {
-    archives apiZip
-}
-
-build.dependsOn "apiZip", "copyBuildXml"

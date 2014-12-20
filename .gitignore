@@ -1,16 +1,21 @@
-# Builds & binaries
-build/
-bin/
+# ForgeGradle
+/.gradle
+/build
+/run
 
-# Tmp files
-*~
-*#
-.gradle/
-eclipse/
-.settings/
-gradle/
-output/
-.cache
+# Eclipse
 .classpath
 .project
-.idea/
+/.settings
+/bin
+
+# IntelliJ
+/.idea
+*.iml
+*.ipr
+*.iws
+/out
+
+# Mac Stuff
+.DS_Store
+*.command
